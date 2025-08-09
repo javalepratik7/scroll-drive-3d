@@ -5,9 +5,11 @@ import { Truck } from './Truck';
 
 interface TruckSceneProps {
   scrollProgress: number;
+  isHijacked?: boolean;
+  isComplete?: boolean;
 }
 
-const TruckScene = ({ scrollProgress }: TruckSceneProps) => {
+const TruckScene = ({ scrollProgress, isHijacked = false, isComplete = false }: TruckSceneProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -81,11 +83,13 @@ const TruckScene = ({ scrollProgress }: TruckSceneProps) => {
             speed={1.5} 
             rotationIntensity={0.1} 
             floatIntensity={0.1}
-            enabled={!scrollProgress}
+            enabled={!isHijacked && scrollProgress === 0}
           >
             <Truck 
               scrollProgress={scrollProgress} 
               isVisible={isVisible}
+              isHijacked={isHijacked}
+              isComplete={isComplete}
             />
           </Float>
         </Suspense>
@@ -94,8 +98,8 @@ const TruckScene = ({ scrollProgress }: TruckSceneProps) => {
         <OrbitControls
           enablePan={false}
           enableZoom={false}
-          enableRotate={true}
-          autoRotate={scrollProgress === 0}
+          enableRotate={!isHijacked}
+          autoRotate={!isHijacked && scrollProgress === 0}
           autoRotateSpeed={0.5}
           maxPolarAngle={Math.PI / 2}
           minPolarAngle={Math.PI / 4}
@@ -105,7 +109,14 @@ const TruckScene = ({ scrollProgress }: TruckSceneProps) => {
       {/* Overlay Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-transparent to-background/20" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div 
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl transition-all duration-1000 ${
+            isHijacked ? 'scale-150 bg-primary/20' : ''
+          }`} 
+        />
+        {isComplete && (
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/10 animate-fade-in" />
+        )}
       </div>
     </div>
   );

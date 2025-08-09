@@ -6,9 +6,11 @@ import { Group, Mesh } from 'three';
 interface TruckProps {
   scrollProgress: number;
   isVisible: boolean;
+  isHijacked?: boolean;
+  isComplete?: boolean;
 }
 
-export const Truck = ({ scrollProgress, isVisible }: TruckProps) => {
+export const Truck = ({ scrollProgress, isVisible, isHijacked = false, isComplete = false }: TruckProps) => {
   const groupRef = useRef<Group>(null);
   const frontWheelLeftRef = useRef<Mesh>(null);
   const frontWheelRightRef = useRef<Mesh>(null);
@@ -22,20 +24,32 @@ export const Truck = ({ scrollProgress, isVisible }: TruckProps) => {
 
   useFrame((state) => {
     if (groupRef.current) {
-      // Apply scroll-based rotation
-      groupRef.current.rotation.y = rotation;
-      
-      // Add subtle floating animation when not scrolling
-      if (scrollProgress === 0) {
+      // Apply scroll-based rotation with smooth interpolation
+      if (isHijacked) {
+        groupRef.current.rotation.y = rotation;
+        // Reset position during hijack
+        groupRef.current.position.y = 0;
+      } else if (scrollProgress === 0) {
+        // Add subtle floating animation when not scrolling
         groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
       }
 
-      // Animate visibility
-      groupRef.current.scale.setScalar(isVisible ? 1 : 0);
+      // Animate visibility and completion effect
+      const targetScale = isVisible ? 1 : 0;
+      const currentScale = groupRef.current.scale.x;
+      const newScale = currentScale + (targetScale - currentScale) * 0.1;
+      groupRef.current.scale.setScalar(newScale);
+
+      // Completion glow effect
+      if (isComplete) {
+        const glowIntensity = Math.sin(state.clock.elapsedTime * 3) * 0.1 + 1;
+        groupRef.current.scale.setScalar(glowIntensity);
+      }
     }
 
-    // Animate wheels
-    const wheelRotation = state.clock.elapsedTime * 2;
+    // Animate wheels - faster when hijacked
+    const wheelSpeed = isHijacked ? 4 : 2;
+    const wheelRotation = state.clock.elapsedTime * wheelSpeed;
     if (frontWheelLeftRef.current) frontWheelLeftRef.current.rotation.x = wheelRotation;
     if (frontWheelRightRef.current) frontWheelRightRef.current.rotation.x = wheelRotation;
     if (rearWheelLeftRef.current) rearWheelLeftRef.current.rotation.x = wheelRotation;
