@@ -2,41 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Transportation-themed design system with professional colors and gradients */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Transportation Theme - Professional Blues & Oranges */
+    --background: 240 6% 10%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 240 8% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 240 8% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 210 100% 50%;  /* Bright transport blue */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 100% 60%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 30 100% 55%;  /* Transport orange */
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 30 100% 65%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 64%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 142 76% 36%;  /* Success green */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 240 6% 20%;
+    --input: 240 6% 20%;
+    --ring: 210 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Transportation Specific Colors */
+    --transport-blue: 210 100% 50%;
+    --transport-orange: 30 100% 55%;
+    --transport-dark: 240 8% 8%;
+    --transport-steel: 220 13% 25%;
+    --transport-chrome: 0 0% 85%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 50%) 0%, hsl(30 100% 55%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(240 8% 8%) 0%, hsl(240 6% 12%) 100%);
+    --gradient-blue: linear-gradient(45deg, hsl(210 100% 45%) 0%, hsl(210 100% 60%) 100%);
+    --gradient-glow: radial-gradient(circle at center, hsl(210 100% 50% / 0.3) 0%, transparent 70%);
+    
+    /* Shadows & Effects */
+    --shadow-transport: 0 25px 50px -12px hsl(210 100% 50% / 0.25);
+    --shadow-glow: 0 0 40px hsl(210 100% 50% / 0.4);
+    --shadow-deep: 0 35px 70px -15px hsl(240 8% 8% / 0.8);
+    
+    /* Animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +123,42 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
+    background: var(--gradient-dark);
+  }
+}
+
+@layer components {
+  /* Transport-themed component styles */
+  .hero-section {
+    background: var(--gradient-dark);
+    position: relative;
+  }
+  
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-glow);
+    pointer-events: none;
+  }
+  
+  .transport-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .transport-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-transport);
+    transition: var(--transition-smooth);
+  }
+  
+  .transport-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-deep);
   }
 }
