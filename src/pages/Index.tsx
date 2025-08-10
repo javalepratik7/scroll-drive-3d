@@ -2,15 +2,42 @@ import HeroSection from '@/components/HeroSection';
 import ServicesSection from '@/components/ServicesSection';
 import StatsSection from '@/components/StatsSection';
 import ContactSection from '@/components/ContactSection';
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect } from 'react';
+
+gsap.registerPlugin(ScrollTrigger);
+
+
 
 const Index = () => {
+
+  useEffect(()=>{
+    gsap.to(".section2 .innerDiv",{
+   transform:"translateX(-150%)",
+  // duration:50,
+  scrollTrigger:{
+      trigger:".section2",
+      scroller:"body",
+      markers:true,
+      start:"top 0%",
+      end:"bottom -250%",
+      scrub:2,
+      pin:true
+  }})
+  },[])
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with 3D Truck */}
-      <HeroSection />
+      <div className='section2 w-[100vw] h-[1vh] bg-white'>
+        <div className="innerDiv">
+        </div>
+          <HeroSection />
+      </div>
       
       {/* Services Section */}
-      <ServicesSection />
+      <ServicesSection  />
       
       {/* Statistics Section */}
       <StatsSection />

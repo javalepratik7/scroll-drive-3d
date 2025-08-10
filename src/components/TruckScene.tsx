@@ -2,26 +2,110 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, Float } from '@react-three/drei';
 import { Suspense, useRef, useEffect, useState } from 'react';
 import { Truck } from './Truck';
+// import React, { useEffect, useState } from 'react';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { Group } from 'three';
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useThree } from "@react-three/fiber";
+import * as THREE from 'three';
 
-interface TruckSceneProps {
-  scrollProgress: number;
-  isHijacked?: boolean;
-  isComplete?: boolean;
-}
 
-const TruckScene = ({ scrollProgress, isHijacked = false, isComplete = false }: TruckSceneProps) => {
+
+gsap.registerPlugin(ScrollTrigger);
+
+
+const TruckScene = () => {
+  const [model, setModel] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [mixer, setMixer] = useState(null);
 
+  
+
+  // Animate truck entry after small delay
   useEffect(() => {
-    // Animate truck entry
     setTimeout(() => setIsVisible(true), 500);
   }, []);
+
+  // Load model
+  useEffect(() => {
+    const loader = new GLTFLoader();
+    loader.load(
+      "/src/Models/Car/scene.gltf",
+      (gltf) => {
+        setModel(gltf.scene);
+
+        // if you want to perform play animations on it then we use this method
+                if (gltf.animations && gltf.animations.length > 0) {
+                  const newMixer = new THREE.AnimationMixer(gltf.scene);
+                   const action1 = newMixer.clipAction(gltf.animations[1]);
+                      action1.play();
+
+                      // Play second animation
+                      if (gltf.animations[2]) {
+                        const action2 = newMixer.clipAction(gltf.animations[2]);
+                        action2.play();
+                      }
+                  setMixer(newMixer);
+                }
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading model:", error);
+      }
+    );
+  }, []);
+
+  // Animate on scroll once model is loaded
+  useEffect(() => {
+    if (!model) return; // Wait until model exists
+    
+
+    animate(),
+    gsap.to(model.position, {
+        x: -0.1,
+        z: 5.5,
+        // y:0.00005,
+        markers: true,
+        start:"top 0%",
+        end:"top -10%",
+      scrollTrigger: {
+        scrub: 2,
+        pin: true
+      }
+    });
+     gsap.to(model.rotation, {
+  y: -(90 * Math.PI / 180),
+  z: 0,
+  markers: true,
+  start:"bottom 20%",
+  end:"top -10%",
+  scrollTrigger: {
+    scrub: 2
+  }
+});
+  }, [model]); // dependency so it runs after model is loaded
+
+    useEffect(() => {
+      if (!mixer) return;
+      
+    }, [mixer]);
+    
+  const clock = new THREE.Clock();
+ const animate = () => {
+        requestAnimationFrame(animate);
+        mixer.update(clock.getDelta());
+      };
+
+  if (!isVisible) return null; // optional: hide until visible
+
+  
 
   return (
     <div className="relative w-full h-screen">
       <Canvas
         camera={{ 
-          position: [8, 4, 8], 
+          position: [0, 0, 8], 
           fov: 45,
           near: 0.1,
           far: 1000
@@ -83,14 +167,18 @@ const TruckScene = ({ scrollProgress, isHijacked = false, isComplete = false }: 
             speed={1.5} 
             rotationIntensity={0.1} 
             floatIntensity={0.1}
-            enabled={!isHijacked && scrollProgress === 0}
           >
-            <Truck 
+             <primitive
+      object={model}
+      position={[0, -0.8, 0]}
+      rotation={[0, 0 * Math.PI * 2, 0]}
+    />
+            {/* <Truck 
               scrollProgress={scrollProgress} 
               isVisible={isVisible}
               isHijacked={isHijacked}
               isComplete={isComplete}
-            />
+            /> */}
           </Float>
         </Suspense>
 
@@ -98,26 +186,13 @@ const TruckScene = ({ scrollProgress, isHijacked = false, isComplete = false }: 
         <OrbitControls
           enablePan={false}
           enableZoom={false}
-          enableRotate={!isHijacked}
-          autoRotate={!isHijacked && scrollProgress === 0}
+          // enableRotate={!isHijacked}
+          // autoRotate={!isHijacked && scrollProgress === 0}
           autoRotateSpeed={0.5}
           maxPolarAngle={Math.PI / 2}
           minPolarAngle={Math.PI / 4}
         />
       </Canvas>
-
-      {/* Overlay Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-transparent to-background/20" />
-        <div 
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl transition-all duration-1000 ${
-            isHijacked ? 'scale-150 bg-primary/20' : ''
-          }`} 
-        />
-        {isComplete && (
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/10 animate-fade-in" />
-        )}
-      </div>
     </div>
   );
 };
