@@ -9,22 +9,67 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useThree } from "@react-three/fiber";
 import * as THREE from 'three';
+import { CustomEase } from "gsap/CustomEase";
 
+
+interface TruckSceneProps {
+  data: unknown; // replace with the actual type of data
+}
+
+// CustomEase.create("custom", "M0,0 C0.126,0.382 0.324,0.036 0.543,0.036 0.911,0.035 0.818,1.001 1,1");
 
 
 gsap.registerPlugin(ScrollTrigger);
 
 
-const TruckScene = () => {
+const TruckScene : React.FC<TruckSceneProps>  = ({data}) => {
   const [model, setModel] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [mixer, setMixer] = useState(null);
+  
+  useEffect(()=>{
+    console.log("data", data)
 
+    
+
+    if(data==true){
+      // gsap.to()
+        gsap.to(model.position, {
+          x: -0.1,
+          z: 3,
+          duration: 6,
+          // delay: 1,
+          yoyo: true,
+          scrub: 2,
+          // repeat: 1, // repeats once (forward + backward)
+          // ease: "power1.inOut"
+          // ease: CustomEase.create("custom", "M0,0 C0.126,0.382 0.324,0.036 0.543,0.036 0.911,0.035 0.818,1.001 1,1 ")
+ease: CustomEase.create("custom", "M0,0 C0.126,0.382 0.019,1.419 0.174,1.445 0.438,1.706 0.44,1.739 0.646,1.659 0.846,1.647 0.811,1.347 0.852,1.232 0.867,1.19 0.906,1.022 0.959,1.085 0.968,1.097 0.991,0.96 1,1 "),          // ease: "bounce.out"
+          // ease: "elastic.out(1,0.3)"
+          // ease: "slow(0.7,0.7,false)",
+        });
+
+     gsap.to(model.rotation, {
+  y: -(360 * Math.PI / 180),
+  z: 0,
+  markers: true,
+  start:"bottom 20%",
+  end:"top -10%",
+  duration:6,
+  ease: "power1.out",
+  // delay:1,
+    scrub: 2
+});
+      animate()
+
+    }
+  },[data])
   
 
   // Animate truck entry after small delay
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 500);
+    CustomEase.create("custom", "M0,0 C0.017,0.053 0.069,0.169 0.103,0.169 0.153,0.169 0.19,0.031 0.226,0.033 0.336,0.035 0.4,0.036 0.543,0.036 0.674,0.035 0.798,-0.015 0.868,0.127 0.906,0.203 0.913,0.443 0.93,0.536 0.967,0.751 0.918,1 1,1 ")
   }, []);
 
   // Load model
@@ -38,14 +83,15 @@ const TruckScene = () => {
         // if you want to perform play animations on it then we use this method
                 if (gltf.animations && gltf.animations.length > 0) {
                   const newMixer = new THREE.AnimationMixer(gltf.scene);
-                   const action1 = newMixer.clipAction(gltf.animations[1]);
+                   const action1 = newMixer.clipAction(gltf.animations[0]);
                       action1.play();
 
                       // Play second animation
-                      if (gltf.animations[2]) {
-                        const action2 = newMixer.clipAction(gltf.animations[2]);
-                        action2.play();
-                      }
+
+                      // if (gltf.animations[2]) {
+                      //   const action2 = newMixer.clipAction(gltf.animations[2]);
+                      //   action2.play();
+                      // }
                   setMixer(newMixer);
                 }
       },
@@ -61,7 +107,6 @@ const TruckScene = () => {
     if (!model) return; // Wait until model exists
     
 
-    animate(),
     gsap.to(model.position, {
         x: -0.1,
         z: 5.5,

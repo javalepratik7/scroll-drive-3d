@@ -5,6 +5,7 @@ import ContactSection from '@/components/ContactSection';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from 'react';
+import ShipSectipn from '@/components/ShipSectipn';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,9 +32,14 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section with 3D Truck */}
       <div className='section2 w-[100vw] h-[1vh] bg-white'>
-        <div className="innerDiv">
-        </div>
+        <div className="innerDiv"></div>
           <HeroSection />
+      </div>
+      <div className='section2 w-[100vw] h-[1vh] bg-white'>
+        <div className="innerDiv"></div>
+          <div style={{height:"100vh"}}>
+          <ShipSectipn/>
+          </div>
       </div>
       
       {/* Services Section */}
@@ -41,6 +47,12 @@ const Index = () => {
       
       {/* Statistics Section */}
       <StatsSection />
+
+      {/* ship section */}
+      
+      {/* <div style={{height:"100vh"}}>
+      <ShipSectipn/>
+      </div> */}
       
       {/* Contact Section */}
       <ContactSection />
