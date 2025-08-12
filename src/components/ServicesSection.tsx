@@ -67,7 +67,7 @@ const ServicesSection = () => {
 
 
   const points = [
-  new THREE.Vector3(0, -2, 0.01),
+  new THREE.Vector3(0, -2, 0),
   new THREE.Vector3(0.8, -1.6, 0),
   new THREE.Vector3(0, -1.4, -0.8),
   new THREE.Vector3(-0.8, -1.6, 0)
@@ -95,7 +95,9 @@ const MovingModel = ({ model }) => {
   return (
     <>
       {model && (
-        <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20 mt-[100vh]">
+        <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20"
+        //  mt-[100vh]"
+         >
           {/* <Canvas
             camera={{
               position: [0, 0, 1],
